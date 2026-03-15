@@ -1,35 +1,42 @@
-name: Atualizar CSVs de Patentes
+name: Atualiza CSVs de Patentes
 
 on:
-  schedule:
-    - cron: '5 2 * * 0'  # todo domingo às 05:00 UTC
-  workflow_dispatch:    # permite rodar manualmente
+  push:
+    branches:
+      - main
+  workflow_dispatch: # permite rodar manualmente
 
 jobs:
-  update:
+  update-csvs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checar o código
+      # 1. Clonar o repositório
+      - name: Checkout do repositório
         uses: actions/checkout@v3
-
-      - name: Configurar Python
-        uses: actions/setup-python@v4
         with:
-          python-version: "3.x"
+          token: ${{ secrets.GITHUB_TOKEN }} # token padrão do GitHub Actions
 
-      - name: Instalar dependências
-        run: pip install requests
-
-      - name: Baixar todos os CSVs
-        run: python dadosabertos.py
-
-      - name: Commit e Push
+      # 2. Configurar Git
+      - name: Configura Git
         run: |
           git config user.name "github-actions"
-          git config user.email "github-actions@users.noreply.github.com"
-          git add *.csv
-          git commit -m "Atualiza CSVs de patentes"
-          git push
+          git config user.email "github-actions@github.com"
+
+      # 3. Gerar/atualizar CSVs
+      - name: Atualiza CSVs
+        run: |
+          # Exemplo: seu script que gera CSVs
+          python scripts/dadosabertos.py
+
+      # 4. Commitar alterações, só se houver mudanças
+      - name: Commitar alterações
+        run: |
+          git add .
+          git diff --cached --quiet || git commit -m "Atualiza CSVs de patentes"
+
+      # 5. Push de volta para main
+      - name: Push para o repositório
+        run: git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
