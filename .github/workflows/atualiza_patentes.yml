@@ -27,7 +27,7 @@ jobs:
       - name: Atualiza CSVs
         run: |
           # Exemplo: seu script que gera CSVs
-          python scripts/dadosabertos.py
+          python dadosabertos.py
 
       # 4. Commitar alterações, só se houver mudanças
       - name: Commitar alterações
