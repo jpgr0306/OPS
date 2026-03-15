@@ -22,7 +22,7 @@ jobs:
         run: pip install requests
 
       - name: Baixar todos os CSVs
-        run: python baixar_patentes.py
+        run: python dadosabertos.py
 
       - name: Commit e Push
         run: |
